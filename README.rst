@@ -11,7 +11,7 @@ Help & Documentation
 
 Help and additional details are available at https://docs.kenzy.ai/
 
-.. |GitHub license| image:: https://img.shields.io/github/license/lnxusr1/kenzy_image
+.. |GitHub license| image:: https://img.shields.io/github/license/lnxusr1/image_analyzer
    :target: https://github.com/lnxusr1/kenzy_image/blob/master/LICENSE
 .. |Python Versions| image:: https://img.shields.io/pypi/pyversions/yt2mp3.svg
 .. |GitHub release (latest by date)| image:: https://img.shields.io/github/v/release/lnxusr1/kenzy_image

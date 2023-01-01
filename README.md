@@ -1,4 +1,4 @@
-# kenzy_image &middot; [![GitHub license](https://img.shields.io/github/license/lnxusr1/kenzy_image)](https://github.com/lnxusr1/kenzy_image/blob/master/LICENSE) ![Python Versions](https://img.shields.io/pypi/pyversions/yt2mp3.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lnxusr1/kenzy_image)
+# kenzy_image &middot; [![GitHub license](https://img.shields.io/github/license/lnxusr1/image_analyzer)](https://github.com/lnxusr1/kenzy_image/blob/master/LICENSE) ![Python Versions](https://img.shields.io/pypi/pyversions/yt2mp3.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lnxusr1/kenzy_image)
 
 This module is dedicated to simplifying the interactions required for face detection, face recognition, object detection, and motion detection.
 
