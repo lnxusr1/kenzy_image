@@ -116,6 +116,9 @@ if ARGS.log_level is not None and ARGS.log_level.strip().lower() in ["debug", "i
 elif ARGS.log_level is not None and ARGS.log_level.strip().lower() == "full":
     logLevel = logging.DEBUG
 
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
 logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S %z',
     filename=ARGS.log_file,
@@ -146,8 +149,12 @@ while True:
 
     ret, frame = cam.read()
     obj.analyze(frame)
+    print("=======================")
+    print("FACES     =", len(obj.faces))
+    print("OBJECTS   =", [x["name"] for x in obj.objects])
+    print("MOVEMENTS =", True if len(obj.movements) > 0 else False)
 
-    cv2.imshow('Motion detector', obj.image)
+    cv2.imshow('IMAGE_ANALYZER', obj.image)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

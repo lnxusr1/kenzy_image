@@ -3,10 +3,14 @@ import face_recognition
 import cv2
 import numpy as np
 import time
+import logging
 
 
 class detector(object):
     def __init__(self, **kwargs):
+
+        self.logger = logging.getLogger("DETECTOR")
+        self.rt_logger = logging.getLogger("DETECT_TIME")
 
         self._imageMarkup = kwargs.get("imageMarkup", True)
         self._faceNames = []
@@ -16,7 +20,11 @@ class detector(object):
         self._recognizeFaces = False
         self._detectObjects = kwargs.get("detectObjects", True)
         self._detectMotion = kwargs.get("detectMotion", True)
-
+        
+        self.logger.info("Face Detection     = " + str("Enabled" if self._detectFaces else "Disabled"))
+        self.logger.info("Object Detection   = " + str("Enabled" if self._detectObjects else "Disabled"))
+        self.logger.info("Motion Detection   = " + str("Enabled" if self._detectMotion else "Disabled"))
+        
         self._faceScaleDownFactor = float(kwargs.get("scaleFactor", "1.0"))  # (1.0 >= VALUE > 0)
         self._faceModel = kwargs.get("faceModel", "hog")  # hog or cnn
         self._faceScaleUpFactor = 1.0  
@@ -53,6 +61,27 @@ class detector(object):
         self._motionMinArea = kwargs.get("motionMinArea", 50)
         self._motionOutlineColor = kwargs.get("motionOutlineColor", (0, 255, 0))
 
+        self.logger.debug("==< CONFIG >===================================")
+        self.logger.debug("detectFaces        = " + str(self._detectFaces))
+        self.logger.debug("detectObjects      = " + str(self._detectObjects))
+        self.logger.debug("detectMotion       = " + str(self._detectMotion))
+        self.logger.debug("scaleFactor        = " + str(self._faceScaleDownFactor))
+        self.logger.debug("faceModel          = " + str(self._faceModel))
+        self.logger.debug("defaultFaceName    = " + str(self._defaultFaceName))
+        self.logger.debug("showFaceNames      = " + str(self._faceShowNames))
+        self.logger.debug("faceFontColor      = " + str(self._faceFontColor))
+        self.logger.debug("faceOutlineColor   = " + str(self._faceOutlineColor))
+        self.logger.debug("objDetectCfg       = " + str(self._objConfigFile))
+        self.logger.debug("objDetectModel     = " + str(self._objModelFile))
+        self.logger.debug("objDetectLabels    = " + str(self._objLabelFile))
+        self.logger.debug("showObjectNames    = " + str(self._objShowNames))
+        self.logger.debug("objFontColor       = " + str(self._objFontColor))
+        self.logger.debug("objOutlineColor    = " + str(self._objOutlineColor))
+        self.logger.debug("motionThreshold    = " + str(self._motionThreshold))
+        self.logger.debug("motionMinArea      = " + str(self._motionMinArea))
+        self.logger.debug("motionOutlineColor = " + str(self._motionOutlineColor))
+        self.logger.debug("==</ CONFIG >==================================")
+
         self.faces = []
         self.objects = []
         self.movements = []
@@ -69,9 +98,12 @@ class detector(object):
         self._faceEncodings.append(newFaceEncoding)
         self._faceNames.append(str(faceName) if faceName is not None else "")
 
+        self.logger.info("Adding face (" + str(faceName) + "): " + str(fileName))
+        
+        self.logger.debug("Enabling face detection because face image has been added")
         self._detectFaces = True
         self._recognizeFaces = True
-
+        
     def _formatImage(self, image=None):
         if image is None:
             return
@@ -107,6 +139,7 @@ class detector(object):
             self._scaledBWImage = cv2.GaussianBlur(src=self._scaledBWImage, ksize=(5, 5), sigmaX=0)
 
     def _loadLabels(self):
+        self.logger.debug("Loading label file from " + str(self._objLabelFile))
         with open(self._objLabelFile, 'rt') as fp:
             self._objLabels = fp.read().rstrip('\n').split('\n')
 
@@ -130,7 +163,7 @@ class detector(object):
 
         end = time.time()
 
-        print("Executed in", (end - start), "seconds.")
+        self.rt_logger.debug("Executed in " + str(end - start) + " seconds")
 
     def face_detection(self, image=None):
         self._formatImage(image)
@@ -188,8 +221,6 @@ class detector(object):
                     } 
                 })
 
-        print(self.faces)
-
     def object_detection(self, image=None):
         self._formatImage(image)
 
@@ -197,8 +228,6 @@ class detector(object):
 
         classIndex, confidence, bbox = self._objModel.detect(self._scaledBGRImage, confThreshold=0.5)
         font = cv2.FONT_HERSHEY_PLAIN
-
-        print(classIndex)
 
         try:
             for classInd, conf, boxes in zip(classIndex.flatten(), confidence.flatten(), bbox):
@@ -245,8 +274,6 @@ class detector(object):
 
         except AttributeError:
             pass
-
-        print(self.objects)
 
     def motion_detection(self, image=None):
         self._formatImage(image)
@@ -298,5 +325,3 @@ class detector(object):
                                    int(float(y) * self._faceScaleUpFactor) + int(float(h) * self._faceScaleUpFactor)), 
                               color=self._motionOutlineColor, 
                               thickness=2)
-        
-        print(self.movements)
