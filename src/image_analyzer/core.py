@@ -6,21 +6,24 @@ import time
 
 
 class detector(object):
-    def __init__(self, detectFaces=False, detectObjects=False, detectMotion=False, scaleFactor=1.0, imageMarkup=False):
+    def __init__(self, **kwargs):
 
-        self._imageMarkup = imageMarkup
+        self._imageMarkup = kwargs.get("imageMarkup", True)
         self._faceNames = []
         self._faceEncodings = []
         
-        self._detectFaces = detectFaces
+        self._detectFaces = kwargs.get("detectFaces", True)
         self._recognizeFaces = False
-        self._detectObjects = detectObjects
-        self._detectMotion = detectMotion
+        self._detectObjects = kwargs.get("detectObjects", True)
+        self._detectMotion = kwargs.get("detectMotion", True)
 
-        self._faceScaleDownFactor = scaleFactor  # (1.0 >= VALUE > 0)
-        self._faceModel = "hog"  # hog or cnn
+        self._faceScaleDownFactor = float(kwargs.get("scaleFactor", "1.0"))  # (1.0 >= VALUE > 0)
+        self._faceModel = kwargs.get("faceModel", "hog")  # hog or cnn
         self._faceScaleUpFactor = 1.0  
-        self._defaultFaceName = "Unknown"
+        self._defaultFaceName = kwargs.get("defaultFaceName", "Unknown")
+        self._faceShowNames = kwargs.get("showFaceNames", True)
+        self._faceOutlineColor = kwargs.get("faceOutlineColor", (0, 0, 255))
+        self._faceFontColor = kwargs.get("faceFontColor", (255, 255, 255))
         
         if self._faceScaleDownFactor < 1 and self._faceScaleDownFactor > 0:
             self._faceScaleUpFactor = ((1.0 - float(self._faceScaleDownFactor)) / float(self._faceScaleDownFactor)) + 1.0
@@ -32,9 +35,12 @@ class detector(object):
         self._scaledBWImage = None
         self._lastScaledBWImage = None
 
-        self._objConfigFile = os.path.join(os.path.dirname(__file__), "resources", "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt")
-        self._objModelFile = os.path.join(os.path.dirname(__file__), "resources", "frozen_inference_graph.pb")
-        self._objLabelFile = os.path.join(os.path.dirname(__file__), "resources", "labels.txt")
+        self._objConfigFile = kwargs.get("objDetectCfg", os.path.join(os.path.dirname(__file__), "resources", "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"))
+        self._objModelFile = kwargs.get("objDetectModel", os.path.join(os.path.dirname(__file__), "resources", "frozen_inference_graph.pb"))
+        self._objLabelFile = kwargs.get("objDetectLabels", os.path.join(os.path.dirname(__file__), "resources", "labels.txt"))
+        self._objShowNames = kwargs.get("showObjectNames", True)
+        self._objOutlineColor = kwargs.get("objOutlineColor", (255, 0, 0))
+        self._objFontColor = kwargs.get("objFontColor", (255, 255, 255))
 
         self._objModel = cv2.dnn_DetectionModel(self._objModelFile, self._objConfigFile)
         self._objModel.setInputSize(320, 320)  # greater this value the better the results; tune it for best output
@@ -43,6 +49,10 @@ class detector(object):
         self._objModel.setInputSwapRB(True)
         self._objLabels = []
         
+        self._motionThreshold = kwargs.get("motionThreshold", 20)
+        self._motionMinArea = kwargs.get("motionMinArea", 50)
+        self._motionOutlineColor = kwargs.get("motionOutlineColor", (0, 255, 0))
+
         self.faces = []
         self.objects = []
         self.movements = []
@@ -86,7 +96,7 @@ class detector(object):
             if self._faceScaleDownFactor != 1.0:
                 self._scaledBGRImage = cv2.resize(self.image, (0, 0), fx=self._faceScaleDownFactor, fy=self._faceScaleDownFactor, interpolation=cv2.INTER_AREA)
             else:
-                self._scaledBGRImage = self.image
+                self._scaledBGRImage = self.image.copy()
 
             self._scaledRGBImage = cv2.cvtColor(self._scaledBGRImage, cv2.COLOR_BGR2RGB)
     
@@ -152,12 +162,12 @@ class detector(object):
             face_name = face_names[idx] if self._recognizeFaces else ""
 
             if self._imageMarkup:
-                cv2.rectangle(self.image, (left, top), (right, bottom), (0, 0, 255), 2)
+                cv2.rectangle(self.image, (left, top), (right, bottom), self._faceOutlineColor, 2)
 
-                if self._recognizeFaces:
-                    cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), (0, 0, 255), cv2.FILLED)
+                if self._recognizeFaces and self._faceShowNames:
+                    cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), self._faceOutlineColor, cv2.FILLED)
                     font = cv2.FONT_HERSHEY_DUPLEX
-                    cv2.putText(self.image, face_names[idx] if face_names is not None else "", (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+                    cv2.putText(self.image, face_names[idx] if face_names is not None else "", (left + 6, bottom - 6), font, 0.5, self._faceFontColor, 1)
 
             if isinstance(self.faces, list):
                 self.faces.append({ 
@@ -227,11 +237,11 @@ class detector(object):
                     })
 
                 if self._imageMarkup:
-                    cv2.rectangle(self.image, (left, top), (right, bottom), (255, 0, 0), 2)
-                    if class_name is not None:
-                        cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), (255, 0, 0), cv2.FILLED)
+                    cv2.rectangle(self.image, (left, top), (right, bottom), self._objOutlineColor, 2)
+                    if class_name is not None and self._objShowNames:
+                        cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), self._objOutlineColor, cv2.FILLED)
                         font = cv2.FONT_HERSHEY_DUPLEX
-                        cv2.putText(self.image, class_name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+                        cv2.putText(self.image, class_name, (left + 6, bottom - 6), font, 0.5, self._objFontColor, 1)
 
         except AttributeError:
             pass
@@ -254,10 +264,10 @@ class detector(object):
         kernel = np.ones((5, 5))
         diff_frame = cv2.dilate(diff_frame, kernel, 1)
 
-        thresh_frame = cv2.threshold(src=diff_frame, thresh=20, maxval=255, type=cv2.THRESH_BINARY)[1]
+        thresh_frame = cv2.threshold(src=diff_frame, thresh=self._motionThreshold, maxval=255, type=cv2.THRESH_BINARY)[1]
         contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
         for contour in contours:
-            if cv2.contourArea(contour) < 50:
+            if cv2.contourArea(contour) < self._motionMinArea:
                 # too small: skip!
                 continue
 
@@ -286,7 +296,7 @@ class detector(object):
                               pt1=(int(float(x) * self._faceScaleUpFactor), int(float(y) * self._faceScaleUpFactor)), 
                               pt2=(int(float(x) * self._faceScaleUpFactor) + int(float(w) * self._faceScaleUpFactor), 
                                    int(float(y) * self._faceScaleUpFactor) + int(float(h) * self._faceScaleUpFactor)), 
-                              color=(0, 255, 0), 
+                              color=self._motionOutlineColor, 
                               thickness=2)
         
         print(self.movements)

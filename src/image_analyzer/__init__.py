@@ -6,6 +6,7 @@ try:
     import os
     import logging 
     import traceback
+    from core import detector
 except ModuleNotFoundError:
     logging.debug(str(sys.exc_info()[0]))
     logging.debug(str(traceback.format_exc()))
