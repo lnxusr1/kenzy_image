@@ -2,6 +2,6 @@ global-exclude *.py[cod]
 include CHANGELOG.md
 include README.md
 include requirements.txt
-include src/image_analyzer/VERSION
-include src/image_analyzer/
-include src/image_analyzer/resources/*.*
+include src/kenzy_image/VERSION
+include src/kenzy_image/
+include src/kenzy_image/resources/*.*

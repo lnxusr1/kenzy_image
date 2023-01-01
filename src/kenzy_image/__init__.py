@@ -12,8 +12,8 @@ except ModuleNotFoundError:
     logging.debug(str(traceback.format_exc()))
     logging.info("Unable to start analyzer due to missing libraries")
 
-__app_name__ = "image_analyzer"
-__app_title__ = "image_analyzer"
+__app_name__ = "kenzy_image"
+__app_title__ = "kenzy_image"
 
 with open(os.path.join(os.path.dirname(__file__), "VERSION"), "r", encoding="UTF-8") as fp:
     __version__ = fp.readline().strip()
