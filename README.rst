@@ -9,7 +9,7 @@ Visit our main site: https://kenzy.ai/
 
 Help & Documentation
 
-Help and additional details are available at https://docs.kenzy.ai/
+Help and additional details are available at https://image-docs.kenzy.ai/
 
 .. |GitHub license| image:: https://img.shields.io/github/license/lnxusr1/image_analyzer
    :target: https://github.com/lnxusr1/kenzy_image/blob/master/LICENSE

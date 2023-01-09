@@ -1,0 +1,27 @@
+site_name: KENZY_IMAGE Docs
+site_url: https://kenzy.ai/
+repo_url: https://github.com/lnxusr1/kenzy-image/
+
+theme: 
+    name: readthedocs
+    highlightjs: true
+    prev_next_buttons_location: none
+    titles_only: true
+    collapse_navigation: false
+
+nav:
+    - Overview: 'index.md'
+    - Links:
+      - '@ Code': 'https://kenzy.ai/code'
+      - '@ Community': 'https://kenzy.ai/discussion/kenzy-image'
+      - '@ Bugs & Issues': 'https://kenzy.ai/issues/kenzy-image'
+      - '@ kenzy.ai': 'https://kenzy.ai'
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+          - import sys
+          - sys.path.append("src")

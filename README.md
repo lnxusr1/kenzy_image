@@ -4,7 +4,7 @@ This module is dedicated to simplifying the interactions required for face detec
 
 Visit our main site: [https://kenzy.ai/](https://kenzy.ai/)
 
-Read the docs: [https://docs.kenzy.ai/](https://docs.kenzy.ai/)
+Read the docs: [https://image-docs.kenzy.ai/](https://image-docs.kenzy.ai/)
 
 ## REFERENCES & IMPORTANT LINKS
 
