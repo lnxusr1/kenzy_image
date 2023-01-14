@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.3]
+
+### Modified
+
+- Multiple updates to documentation
+- Corrected a bug when setting font and outline colors using tuples for running as module
+
 ## [0.0.2]
 
 This is the initial version and has not be heavily validated or tested.  Stable versions should be available in v1.0 or later.
