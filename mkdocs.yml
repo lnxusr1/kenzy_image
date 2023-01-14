@@ -11,6 +11,8 @@ theme:
 
 nav:
     - Overview: 'index.md'
+    - Detector: 'detector.md'
+    - References: 'references.md'
     - Links:
       - '@ Code': 'https://kenzy.ai/code'
       - '@ Community': 'https://kenzy.ai/discussion/kenzy-image'

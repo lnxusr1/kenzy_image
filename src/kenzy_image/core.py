@@ -162,8 +162,9 @@ class detector(object):
             self.motion_detection()
 
         end = time.time()
-
-        self.rt_logger.debug("Executed in " + str(end - start) + " seconds")
+        
+        self.rt_secs = end - start
+        self.rt_logger.debug("Executed in " + str(self.rtSecs) + " seconds")
 
     def face_detection(self, image=None):
         self._formatImage(image)

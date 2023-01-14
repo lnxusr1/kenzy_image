@@ -13,6 +13,21 @@ def doParseArg(argName, argValue, cfg):
 
     return
 
+def getTupleValue(inValue):
+    if inValue is None or str(inValue).strip() == "":
+        return None
+    
+    if str(inValue).startswith("(") and str(inValue).endswith(")"):
+        try:
+            return eval(inValue)
+        except Exception:
+            logger = logging.getLogger("STARTUP")
+            logger.warning("Unable to convert value to tuple - " + str(inValue))
+            return None
+    
+    logger = logging.getLogger("STARTUP")
+    logger.warning("Value does not appear to be a tuple - " + str(inValue))
+    return None
 
 def doParseArgs(cfg, ARGS):
     if not isinstance(cfg, dict):
@@ -35,8 +50,8 @@ def doParseArgs(cfg, ARGS):
     # Faces
     doParseArg("defaultFaceName", ARGS.face_detect_default_name, cfg)
     doParseArg("faceModel", ARGS.face_detect_model, cfg)
-    doParseArg("faceFontColor", ARGS.face_detect_font_color, cfg)
-    doParseArg("faceOutlineColor", ARGS.face_detect_outline_color, cfg)
+    doParseArg("faceFontColor", getTupleValue(ARGS.face_detect_font_color), cfg)
+    doParseArg("faceOutlineColor", getTupleValue(ARGS.face_detect_outline_color), cfg)
 
     if ARGS.no_face_names:
         cfg["showFaceNames"] = False
@@ -45,8 +60,8 @@ def doParseArgs(cfg, ARGS):
     doParseArg("objDetectCfg", ARGS.object_detect_config, cfg)
     doParseArg("objDetectModel", ARGS.object_detect_model, cfg)
     doParseArg("objDetectLabels", ARGS.object_detect_labels, cfg)
-    doParseArg("objFontColor", ARGS.object_detect_font_color, cfg)
-    doParseArg("objOutlineColor", ARGS.object_detect_outline_color, cfg)
+    doParseArg("objFontColor", getTupleValue(ARGS.object_detect_font_color), cfg)
+    doParseArg("objOutlineColor", getTupleValue(ARGS.object_detect_outline_color), cfg)
 
     if ARGS.no_object_names:
         cfg["showObjectNames"] = False
@@ -54,7 +69,7 @@ def doParseArgs(cfg, ARGS):
     # Motion
     doParseArg("motionThreshold", ARGS.motion_detect_threshold, cfg)
     doParseArg("motionMinArea", ARGS.motion_detect_min_area, cfg)
-    doParseArg("motionOutlineColor", ARGS.motion_detect_outline_color, cfg)
+    doParseArg("motionOutlineColor", getTupleValue(ARGS.motion_detect_outline_color), cfg)
 
     return cfg
 
@@ -151,7 +166,7 @@ while True:
     obj.analyze(frame)
     print("=======================")
     print("FACES     =", len(obj.faces))
-    print("OBJECTS   =", [x["name"] for x in obj.objects])
+    print("OBJECTS   =", [x.get("name") for x in obj.objects])
     print("MOVEMENTS =", True if len(obj.movements) > 0 else False)
 
     cv2.imshow('KENZY_IMAGE', obj.image)

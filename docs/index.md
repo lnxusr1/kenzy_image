@@ -7,13 +7,21 @@ This module is dedicated to simplifying the interactions required for face detec
 The easiest way to install kenzy_image is with the following:
 
 ```
-pip3 install kenzy-image
+pip install kenzy-image
 ```
+
+Just make sure you're running Python 3.6 or newer.
+
+## Embedding into your program
+
+Visit the [detector](detector.md) page
+
+## Running as module
 
 Options are as follows for starting kenzy_image:
 
 ```
-python3 -m kenzy_image [OPTIONS]
+python -m kenzy_image [OPTIONS]
 
 General Options:
   -h, --help            show this help message and exit
