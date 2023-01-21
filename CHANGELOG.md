@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.4]
+
+### Modified
+
+- Fixed but in rt_secs/rtSets for runtime stats.
+
+
 ## [0.0.3]
 
 ### Modified

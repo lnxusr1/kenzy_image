@@ -163,7 +163,7 @@ class detector(object):
 
         end = time.time()
         
-        self.rt_secs = end - start
+        self.rtSecs = end - start
         self.rt_logger.debug("Executed in " + str(self.rtSecs) + " seconds")
 
     def face_detection(self, image=None):
