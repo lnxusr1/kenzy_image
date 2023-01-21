@@ -103,6 +103,8 @@ class detector(object):
         self.logger.debug("Enabling face detection because face image has been added")
         self._detectFaces = True
         self._recognizeFaces = True
+
+        return True
         
     def _formatImage(self, image=None):
         if image is None:
