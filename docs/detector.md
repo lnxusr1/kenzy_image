@@ -4,7 +4,7 @@
 
 ```
 import cv2  # For webcam input
-from kenzy_image import detector
+from kenzy_image.core import detector
 
 # Create our Kenzy Detector Object
 myImageDetector = detector(detectFaces=True, 
