@@ -61,7 +61,8 @@ cv2.destroyAllWindows()
 | showFaces | `True` | Enable drawing outlines around faces on __detector.image__ |
 | objDetectCfg | String | Sets the path to the configuration for the inference model |
 | objDetectorModel | String | Sets the inference model to use for objects |
-| objDetectLables | String | Sets the path to the object labels list file |
+| objDetectLabels | String | Sets the path to the object labels list file |
+| objDetectList | String | Limits list of objects to detect detection (optional) |
 | objFontColor | `(255, 255, 255)` | Color as RGB tuple for text of object name |
 | objOutlineColor | `(255, 0, 0)` | Color as RGB tuple for box around the object |
 | showObjectNames | `True` | Enable drawing outlines around objects on __detector.image__ |

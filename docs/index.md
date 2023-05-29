@@ -61,6 +61,8 @@ Object Detection:
                         Object names font color as tuple e.g. (0, 0, 255)
   --object-detect-outline-color OBJECT_DETECT_OUTLINE_COLOR
                         Object detection outline color as tuple e.g. (0, 0, 255)
+  --object-list  OBJECT_LIST
+                        Limit list of objects to detect detection (optional)
   --no-object-names     Hides the object names even if identified.
 
 Motion Detection:

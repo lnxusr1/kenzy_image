@@ -55,6 +55,12 @@ class detector(object):
         self._scaledBWImage = None
         self._lastScaledBWImage = None
 
+        self._objList = kwargs.get("objDetectList")
+        if self._objList is not None and isinstance(self._objList, str):
+            self._objList = [str(x).lower().strip() for x in self._objList.split(",") if str(x).lower().strip() != ""]
+        if self._objList is not None and not isinstance(self._objList, list):
+            self._objList = None
+
         self._objConfigFile = kwargs.get("objDetectCfg", os.path.join(os.path.dirname(__file__), "resources", "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"))
         self._objModelFile = kwargs.get("objDetectModel", os.path.join(os.path.dirname(__file__), "resources", "frozen_inference_graph.pb"))
         self._objLabelFile = kwargs.get("objDetectLabels", os.path.join(os.path.dirname(__file__), "resources", "labels.txt"))
@@ -85,6 +91,7 @@ class detector(object):
         self.logger.debug("faceFontColor      = " + str(self._faceFontColor))
         self.logger.debug("faceOutlineColor   = " + str(self._faceOutlineColor))
         self.logger.debug("objDetectCfg       = " + str(self._objConfigFile))
+        self.logger.debug("objDetectList      = " + str(self._objList))
         self.logger.debug("objDetectModel     = " + str(self._objModelFile))
         self.logger.debug("objDetectLabels    = " + str(self._objLabelFile))
         self.logger.debug("showObjectNames    = " + str(self._objShowNames))
@@ -165,7 +172,7 @@ class detector(object):
         """
         Set detectFaces, detectObjects, or detectMotion to True or False to override global setting for this one image.
         """
-        
+
         start = time.time()
 
         self.faces = []
@@ -255,6 +262,15 @@ class detector(object):
 
         try:
             for classInd, conf, boxes in zip(classIndex.flatten(), confidence.flatten(), bbox):
+                class_name = None
+
+                if classInd > 0 and classInd <= len(self._objLabels):
+                    class_name = self._objLabels[classInd - 1]
+
+                if self._objList is not None:
+                    if class_name is None or str(class_name).strip().lower() not in self._objList:
+                        continue
+
                 sleft = boxes[0]
                 stop = boxes[1]
                 sright = boxes[0] + boxes[2]
@@ -264,11 +280,6 @@ class detector(object):
                 top = int(stop * self._faceScaleUpFactor)
                 right = int(sright * self._faceScaleUpFactor)
                 bottom = int(sbottom * self._faceScaleUpFactor)
-
-                class_name = None
-
-                if classInd > 0 and classInd <= len(self._objLabels):
-                    class_name = self._objLabels[classInd - 1]
 
                 if isinstance(self.objects, list):
                     self.objects.append({ 

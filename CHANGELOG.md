@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - ```detector.analyze()``` now supports overrides to core setting by supplying the boolean values for detectFaces, detectObjects, and/or detectMotion directly to this function.
+- ```objDetectList``` now enables you to specify a list of objects to look for (must be one of the values in the object labels list).
+
+### Modified
+
+- Fixed spelling mistakes in documentation for option variables
 
 ## [0.0.5]
 

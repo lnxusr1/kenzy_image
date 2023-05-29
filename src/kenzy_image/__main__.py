@@ -62,6 +62,7 @@ def doParseArgs(cfg, ARGS):
 
     # Objects
     doParseArg("objDetectCfg", ARGS.object_detect_config, cfg)
+    doParseArg("objDetectList", ARGS.object_list, cfg)
     doParseArg("objDetectModel", ARGS.object_detect_model, cfg)
     doParseArg("objDetectLabels", ARGS.object_detect_labels, cfg)
     doParseArg("objFontColor", getTupleValue(ARGS.object_detect_font_color), cfg)
@@ -110,6 +111,7 @@ object_group.add_argument('--object-detect-model', default=None, help="Object de
 object_group.add_argument('--object-detect-labels', default=None, help="Object detection inference model label files")
 object_group.add_argument('--object-detect-font-color', default=None, help="Object names font color as tuple e.g. (0, 0, 255)")
 object_group.add_argument('--object-detect-outline-color', default=None, help="Object detection outline color as tuple e.g. (0, 0, 255)")
+object_group.add_argument('--object-list', default=None, help="Limit list of objects to detect detection (optional)")
 object_group.add_argument('--no-object-names', action="store_true", help="Hides the object names even if identified.")
 
 motion_group = parser.add_argument_group('Motion Detection')
