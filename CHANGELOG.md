@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Modified
 
+- Changed dependency from opencv-python to opencv-contrib-python (Raspberry Pi requires this for Face/Object detection)
 - Cleaned up mistake in Detector documentation with invalid object name in example
 
 ## [0.0.4]
