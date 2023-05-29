@@ -161,7 +161,11 @@ class detector(object):
         with open(self._objLabelFile, 'rt') as fp:
             self._objLabels = fp.read().rstrip('\n').split('\n')
 
-    def analyze(self, image):
+    def analyze(self, image, detectFaces=None, detectObjects=None, detectMotion=None):
+        """
+        Set detectFaces, detectObjects, or detectMotion to True or False to override global setting for this one image.
+        """
+        
         start = time.time()
 
         self.faces = []
@@ -171,13 +175,13 @@ class detector(object):
 
         self._formatImage(image)
         
-        if self._detectFaces:
+        if (detectFaces is None and self._detectFaces) or detectFaces:
             self.face_detection()
 
-        if self._detectObjects:
+        if (detectObjects is None and self._detectObjects) or detectObjects:
             self.object_detection()
 
-        if self._detectMotion:
+        if (detectMotion is None and self._detectMotion) or detectMotion:
             self.motion_detection()
 
         end = time.time()

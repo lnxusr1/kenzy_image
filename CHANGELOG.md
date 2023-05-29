@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.6]
+
+### Added
+
+- ```detector.analyze()``` now supports overrides to core setting by supplying the boolean values for detectFaces, detectObjects, and/or detectMotion directly to this function.
+
 ## [0.0.5]
 
 ### Added
