@@ -89,6 +89,7 @@ parser.add_argument('-v', '--version', action="store_true", help="Print Version"
 
 startup_group = parser.add_argument_group('Startup Options')
 
+startup_group.add_argument('--camera-device', default=None, help="Camera object to use")
 startup_group.add_argument('--no-markup', action="store_true", help="Hide outlines and names")
 startup_group.add_argument('--scale-factor', default=None, help="Image scale factor (decimal).  Values < 1 improve performance.")
 startup_group.add_argument('--orientation', default=None, help="Image orientation (0, 90, 180, or 270)")
@@ -166,7 +167,14 @@ if ARGS.faces is not None and isinstance(ARGS.faces, list):
 
         obj.addFace(item[0], item[1])
 
-cam = cv2.VideoCapture(0)
+devId = 0
+if ARGS.camera_device is not None:
+    try:
+        devId = int(str(ARGS.camera_device).strip())
+    except ValueError:
+        devId = str(ARGS.camera_device).strip()
+
+cam = cv2.VideoCapture(devId)
 while True:
 
     ret, frame = cam.read()

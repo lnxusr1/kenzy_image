@@ -8,10 +8,12 @@ All notable changes to this project will be documented in this file.
 
 - ```detector.analyze()``` now supports overrides to core setting by supplying the boolean values for detectFaces, detectObjects, and/or detectMotion directly to this function.
 - ```objDetectList``` now enables you to specify a list of objects to look for (must be one of the values in the object labels list).
+- Enabled ```--camera-device``` for cli calls to specify what device or RTSP stream to use as the source.
 
 ### Modified
 
 - Fixed spelling mistakes in documentation for option variables
+- Optimized hierarchy for image processing to improve overall performance and lag
 
 ## [0.0.5]
 

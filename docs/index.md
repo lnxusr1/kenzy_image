@@ -30,6 +30,7 @@ General Options:
   -v, --version         Print Version
 
 Startup Options:
+  --camera-device       Device ID or RTSP stream to leverage for source images.
   --no-markup           Hide outlines and names
   --scale-factor SCALE_FACTOR
                         Image scale factor (decimal).  Values < 1 improve performance.

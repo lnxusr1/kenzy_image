@@ -182,28 +182,26 @@ class detector(object):
 
         self._formatImage(image)
         
-        if (detectFaces is None and self._detectFaces) or detectFaces:
-            self.face_detection()
+        if (detectMotion is None and self._detectMotion) or detectMotion:
+            self.motion_detection()
 
         if (detectObjects is None and self._detectObjects) or detectObjects:
             self.object_detection()
 
-        if (detectMotion is None and self._detectMotion) or detectMotion:
-            self.motion_detection()
+        if (detectFaces is None and self._detectFaces) or detectFaces:
+            self.face_detection(filterByObjects=detectFaces if detectFaces is not None else self._detectObjects)
 
         end = time.time()
         
         self.rtSecs = end - start
         self.rt_logger.debug("Executed in " + str(self.rtSecs) + " seconds")
 
-    def face_detection(self, image=None):
-        self._formatImage(image)
-        self.faces = []
+    def _get_face_parts(self, im, offset_top=None, offset_left=None):
 
-        face_locations = face_recognition.face_locations(self._scaledRGBImage, model=self._faceModel)
+        face_locations = face_recognition.face_locations(im, model=self._faceModel)
         face_names = None
         if self._recognizeFaces:
-            face_encodings = face_recognition.face_encodings(self._scaledRGBImage, face_locations)
+            face_encodings = face_recognition.face_encodings(im, face_locations)
 
             face_names = []
             for face_encoding in face_encodings:
@@ -216,6 +214,65 @@ class detector(object):
                     name = self._faceNames[best_match_index]
 
                 face_names.append(name)
+
+        if offset_top is not None and offset_left is not None:
+            fl = []
+            for item in face_locations:
+                # Relocate using top left corner of cropped image
+                fl.append((offset_top + item[0], offset_left + item[1], offset_top + item[2], offset_left + item[3]))
+
+            face_locations = fl            
+        
+        return face_locations, face_names
+
+    def face_detection(self, image=None, filterByObjects=False):
+        self._formatImage(image)
+        self.faces = []
+
+        face_locations = []
+        face_names = []
+
+        # Optimization:  
+        # If we have enabled object detection but we don't find any "person" then we can skip to the end.
+        if filterByObjects and "person" in self._objLabels:
+            if "person" not in [x.get("name") for x in self.objects]:
+                return
+            
+            else:
+                # Theoretically, since we can do object detection for "person" then we could carve out of the
+                # main picture the "person" entries and feed those individually which should make the whole
+                # process run faster since it'd be covering fewer pixels... thus enabling larger scale images.
+                #
+                # Obviously this only works if detect objects is enabled and we include person detection there.
+                # So to make this "real" we would need a new variable to use object/face optimizations while
+                # still enabling the end user to supply their own inference model which may not map person or
+                # may map it in an incompatible way.
+
+                for item in self.objects:
+                    if item.get("name").lower().strip() == "person":
+
+                        loc = item["scaled_location"]
+                        left = loc["left"]
+                        top = loc["top"]
+                        right = loc["right"]
+                        bottom = loc["bottom"]
+                        im = self._scaledRGBImage[top:bottom, left:right]
+
+                        fl, fn = self._get_face_parts(im, top, left)
+                        face_locations.extend(fl)
+                        if fn is None:
+                            face_names.append(None)
+                        else:
+                            face_names.extend(fn)
+
+        else:
+            # Default (if detectObjects is disabled and filterByObjects is False)
+            fl, fn = self._get_face_parts(self._scaledRGBImage)
+            face_locations.extend(fl)
+            if fn is None:
+                face_names.append(None)
+            else:
+                face_names.extend(fn)
 
         for idx, (stop, sright, sbottom, sleft) in enumerate(face_locations):
             left = int(sleft * self._faceScaleUpFactor)
