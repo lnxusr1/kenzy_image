@@ -33,6 +33,8 @@ Startup Options:
   --no-markup           Hide outlines and names
   --scale-factor SCALE_FACTOR
                         Image scale factor (decimal).  Values < 1 improve performance.
+  --orientation ORIENTATION
+                        Image orientation. (0, 90, 180, or 270)
 
 Face Detection:
   --no-faces            Disable face detection

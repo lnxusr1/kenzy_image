@@ -2,7 +2,7 @@
 
 This module is dedicated to simplifying the interactions required for face detection, face recognition, object detection, and motion detection.  Visit our main site: [https://kenzy.ai/](https://kenzy.ai/)
 
-More info available in the [DOCUMENTATION](https://image-docs.kenzy.ai/)
+More info available in the [documentation](https://image-docs.kenzy.ai/)
 
 ## Installation
 

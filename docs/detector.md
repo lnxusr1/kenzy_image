@@ -48,6 +48,7 @@ cv2.destroyAllWindows()
 
 | Variable | Default | Description |
 | :------- | :------ | :---------- |
+| orientation | `0` | Image orientation. (0, 90, 180, or 270) |
 | detectFaces | `True` | Enable/disable face detection |
 | detectObjects | `True` | Enable/disable object detection |
 | detectMotion | `True` | Enable/disable motion detection |

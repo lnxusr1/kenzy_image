@@ -13,6 +13,7 @@ def doParseArg(argName, argValue, cfg):
 
     return
 
+
 def getTupleValue(inValue):
     if inValue is None or str(inValue).strip() == "":
         return None
@@ -29,9 +30,12 @@ def getTupleValue(inValue):
     logger.warning("Value does not appear to be a tuple - " + str(inValue))
     return None
 
+
 def doParseArgs(cfg, ARGS):
     if not isinstance(cfg, dict):
         cfg = {}
+
+    doParseArg("orientation", ARGS.orientation, cfg)
 
     if ARGS.no_faces:
         cfg["defectFaces"] = False
@@ -86,6 +90,7 @@ startup_group = parser.add_argument_group('Startup Options')
 
 startup_group.add_argument('--no-markup', action="store_true", help="Hide outlines and names")
 startup_group.add_argument('--scale-factor', default=None, help="Image scale factor (decimal).  Values < 1 improve performance.")
+startup_group.add_argument('--orientation', default=None, help="Image orientation (0, 90, 180, or 270)")
 
 face_group = parser.add_argument_group('Face Detection')
 

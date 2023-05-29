@@ -15,6 +15,18 @@ class detector(object):
         self._imageMarkup = kwargs.get("imageMarkup", True)
         self._faceNames = []
         self._faceEncodings = []
+
+        orientation = int(kwargs.get("orientation", "0"))  # 0, 90, 180, 270
+        self._orientation = None
+        if orientation == 90:
+            self._orientation = cv2.ROTATE_90_CLOCKWISE
+            self._isRotated = False
+        elif orientation == 180:
+            self._orientation = cv2.ROTATE_180
+            self._isRotated = False
+        elif orientation == 270 or orientation == -90:
+            self._orientation = cv2.ROTATE_90_COUNTERCLOCKWISE
+            self._isRotated = False
         
         self._detectFaces = kwargs.get("detectFaces", True)
         self._recognizeFaces = False
@@ -62,6 +74,7 @@ class detector(object):
         self._motionOutlineColor = kwargs.get("motionOutlineColor", (0, 255, 0))
 
         self.logger.debug("==< CONFIG >===================================")
+        self.logger.debug("orientation        = " + str(orientation))
         self.logger.debug("detectFaces        = " + str(self._detectFaces))
         self.logger.debug("detectObjects      = " + str(self._detectObjects))
         self.logger.debug("detectMotion       = " + str(self._detectMotion))
@@ -119,6 +132,9 @@ class detector(object):
             else:
                 raise FileNotFoundError("Image not found for analysis.")
 
+        if self._orientation is not None:
+            self.image = cv2.rotate(self.image, self._orientation)
+
         self._scaledBGRImage = None
         self._scaleImage()
 
@@ -151,6 +167,7 @@ class detector(object):
         self.faces = []
         self.objects = []
         self.movements = []
+        self._isRotated = False if self._orientation is not None else True
 
         self._formatImage(image)
         
