@@ -2,7 +2,7 @@
 
 This module is dedicated to simplifying the interactions required for face detection, face recognition, object detection, and motion detection.  Visit our main site: [https://kenzy.ai/](https://kenzy.ai/)
 
-More info available in the [DOCUMENTATION](https://image-docs.kenzy.ai/)
+More info available in the [documentation](https://image-docs.kenzy.ai/)
 
 ## Installation
 
@@ -45,9 +45,9 @@ while True:
     myImageDetector.analyze(frame)
 
     print("=======================")
-    print("FACES     =", len(obj.faces))
-    print("OBJECTS   =", [x.get("name") for x in obj.objects])
-    print("MOVEMENTS =", True if len(obj.movements) > 0 else False)
+    print("FACES     =", len(myImageDetector.faces))
+    print("OBJECTS   =", [x.get("name") for x in myImageDetector.objects])
+    print("MOVEMENTS =", True if len(myImageDetector.movements) > 0 else False)
 
     # Show the frame with markup
     cv2.imshow('KENZY_IMAGE', myImageDetector.image)

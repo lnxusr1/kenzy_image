@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5]
+
+### Added
+
+- ```orientation``` option with values of 0, 90, 180, or 270 to rotate the input image by the desired degree.
+
+### Modified
+
+- Changed dependency from opencv-python to opencv-contrib-python (Raspberry Pi requires this for Face/Object detection)
+- Cleaned up mistake in Detector documentation with invalid object name in example
+
 ## [0.0.4]
 
 ### Modified

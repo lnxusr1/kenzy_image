@@ -1,19 +1,18 @@
-## REFERENCES & IMPORTANT LINKS
+### REFERENCES & IMPORTANT LINKS
 
-### Face Detection & Recognition
+Many thanks to those that build the models and core libraries that KENZY_IMAGE incorporates.  Please find links to those below:
 
-- https://git.ece.iastate.edu/se_329_cylicon_valley/face_recognition
-- https://github.com/ageitgey/face_recognition
+#### Face Detection & Recognition
 
-### Object Detection
+- [Face Recognition Concepts and Examples](https://git.ece.iastate.edu/se_329_cylicon_valley/face_recognition)
+- [Face Recognition Library](https://github.com/ageitgey/face_recognition)
 
-- https://github.com/zafarRehan/object_detection_COCO
-- https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/ <-- Better label set for frozen inference model
+#### Object Detection
 
-### Newest Model YOLOv7 (GPL) ... still working on integrating this
-
-- https://github.com/wongkinyiu/yolov7
+- [COCO Inference Model &amp; Config](https://github.com/zafarRehan/object_detection_COCO)
+- [COCO Labels](https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/) <-- Better label set for frozen inference model
+- [YOLOv7 Model](https://github.com/wongkinyiu/yolov7) <-- Newest model
 
 ### Motion Detection
 
-- https://towardsdatascience.com/image-analysis-for-beginners-creating-a-motion-detector-with-opencv-4ca6faba4b42
+- [Motion Detection Example](https://towardsdatascience.com/image-analysis-for-beginners-creating-a-motion-detector-with-opencv-4ca6faba4b42)

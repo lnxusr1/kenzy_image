@@ -29,9 +29,9 @@ while True:
     myImageDetector.analyze(frame)
 
     print("=======================")
-    print("FACES     =", len(obj.faces))
-    print("OBJECTS   =", [x.get("name") for x in obj.objects])
-    print("MOVEMENTS =", True if len(obj.movements) > 0 else False)
+    print("FACES     =", len(myImageDetector.faces))
+    print("OBJECTS   =", [x.get("name") for x in myImageDetector.objects])
+    print("MOVEMENTS =", True if len(myImageDetector.movements) > 0 else False)
 
     # Show the frame with markup
     cv2.imshow('KENZY_IMAGE', myImageDetector.image)
@@ -48,6 +48,7 @@ cv2.destroyAllWindows()
 
 | Variable | Default | Description |
 | :------- | :------ | :---------- |
+| orientation | `0` | Image orientation. (0, 90, 180, or 270) |
 | detectFaces | `True` | Enable/disable face detection |
 | detectObjects | `True` | Enable/disable object detection |
 | detectMotion | `True` | Enable/disable motion detection |
