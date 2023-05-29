@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5]
+
+### Modified
+
+- Cleaned up mistake in Detector documentation with invalid object name in example
+
 ## [0.0.4]
 
 ### Modified
