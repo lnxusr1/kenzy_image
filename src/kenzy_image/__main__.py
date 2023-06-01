@@ -3,6 +3,7 @@ import logging
 import os
 import json
 import cv2
+import time
 from . import __app_name__, __version__
 from .core import detector
 
@@ -61,6 +62,7 @@ def doParseArgs(cfg, ARGS):
         cfg["showFaceNames"] = False
 
     # Objects
+    doParseArg("objModelType", ARGS.object_detect_type, cfg)
     doParseArg("objDetectCfg", ARGS.object_detect_config, cfg)
     doParseArg("objDetectList", ARGS.object_list, cfg)
     doParseArg("objDetectModel", ARGS.object_detect_model, cfg)
@@ -107,6 +109,7 @@ face_group.add_argument('--faces', action="append", nargs=2, metavar=("path", "n
 object_group = parser.add_argument_group('Object Detection')
 
 object_group.add_argument('--no-objects', action="store_true", help="Disable object detection")
+object_group.add_argument('--object-detect-type', default="yolo", help="Object detection type (yolo or ssd)")
 object_group.add_argument('--object-detect-config', default=None, help="Object detection configuration")
 object_group.add_argument('--object-detect-model', default=None, help="Object detection inference model file")
 object_group.add_argument('--object-detect-labels', default=None, help="Object detection inference model label files")
@@ -174,15 +177,22 @@ if ARGS.camera_device is not None:
     except ValueError:
         devId = str(ARGS.camera_device).strip()
 
+logger = logging.getLogger("RESULTS")
 cam = cv2.VideoCapture(devId)
 while True:
 
+    start = time.time()
+    
     ret, frame = cam.read()
     obj.analyze(frame)
-    print("=======================")
-    print("FACES     =", len(obj.faces))
-    print("OBJECTS   =", [x.get("name") for x in obj.objects])
-    print("MOVEMENTS =", True if len(obj.movements) > 0 else False)
+
+    end = time.time()
+
+    logger.info("=======================")
+    logger.info("FACES      = " + str(len(obj.faces)))
+    logger.info("OBJECTS    = " + str([x.get("name") for x in obj.objects]))
+    logger.info("MOVEMENTS  = " + str(True if len(obj.movements) > 0 else False))
+    logger.info("TOTAL TIME = " + str(end - start) + " seconds")
 
     cv2.imshow('KENZY_IMAGE', obj.image)
 

@@ -9,6 +9,7 @@ from kenzy_image.core import detector
 # Create our Kenzy Detector Object
 myImageDetector = detector(detectFaces=True, 
                            detectObjects=True, 
+                           objModelType="ssd",  # or yolo
                            detectMotion=True, 
                            imageMarkup=True, 
                            scaleFactor=0.5)
@@ -59,8 +60,9 @@ cv2.destroyAllWindows()
 | faceFontColor | `(255, 255, 255)` | Color as RGB tuple for text of face name |
 | faceOutlineColor | `(0, 0, 255)` | Color as RGB tuple for box around the face |
 | showFaces | `True` | Enable drawing outlines around faces on __detector.image__ |
+| objModelType | `ssd` | Sets the model type (can be __yolo__ or __ssd__) |
 | objDetectCfg | String | Sets the path to the configuration for the inference model |
-| objDetectorModel | String | Sets the inference model to use for objects |
+| objDetectModel | String | Sets the inference model to use for objects |
 | objDetectLabels | String | Sets the path to the object labels list file |
 | objDetectList | String | Limits list of objects to detect detection (optional) |
 | objFontColor | `(255, 255, 255)` | Color as RGB tuple for text of object name |
@@ -82,8 +84,35 @@ The `detector.analyze()` processes the supplied image and saves the results into
 
 In the Basic Usage section above it shows a very simple example of how these values could be leveraged.
 
+## Yolov7 - objDetectCfg
 
-## Notes
+For `yolo` models you can supply your own configuration to change the confidence score, IOU, and channels.
 
-* Object detection model is currently using Yolov3 with the COCO data set on a pretrained inference model.
-* For motion detection to work you must have at least 2 frames sent via `.analyze()` method since it calculates the difference between the two images to identify motion.  For best results consider using a video or camera feed as these provide constant streams of similar images on which to perform the analysis.
+```
+import cv2  # For webcam input
+from kenzy_image.core import detector
+
+# Create our Kenzy Detector Object
+myImageDetector = detector(detectFaces=True, 
+                           detectObjects=True, 
+                           objModelType="yolo",
+                           objDetectModel="/path/to/yolov7-tiny.pt",
+                           objDetectLabels="/path/to/yolov7-labels.txt",
+                           objDetectCfg={
+                               "libary": "yolov7",
+                               "confidence": 0.5,
+                               "iou": 0.45,
+                               "size": 640,
+                               "augment": False
+                           },
+                           detectMotion=True, 
+                           imageMarkup=True, 
+                           scaleFactor=0.5)
+```
+
+## Optimizing Performance & Results
+
+* Object detection is currently using __Yolov7__ with the COCO data set from the *yolov7-tiny* model.
+* To use motion detection you must have at least 2 image frames sent via `.analyze()` as it calculates the difference between the two images to identify motion.  For best results consider using a video or camera feed.
+* You may need to increase the `motionMinArea` to reduce chatter
+* Shrinking the __scaleFactor__ to a decimal between `0` and `1` will improve performance at the cost of accuracy by scaling down the image.  Likewise, if you increase this value beyond `1` your results may improve *marginally* at the expense of performance.
