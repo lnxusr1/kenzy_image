@@ -55,18 +55,67 @@ class detector(object):
         self._scaledBWImage = None
         self._lastScaledBWImage = None
 
-        self._objConfigFile = kwargs.get("objDetectCfg", os.path.join(os.path.dirname(__file__), "resources", "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"))
-        self._objModelFile = kwargs.get("objDetectModel", os.path.join(os.path.dirname(__file__), "resources", "frozen_inference_graph.pb"))
-        self._objLabelFile = kwargs.get("objDetectLabels", os.path.join(os.path.dirname(__file__), "resources", "labels.txt"))
+        self._objList = kwargs.get("objDetectList")
+        if self._objList is not None and isinstance(self._objList, str):
+            self._objList = [str(x).lower().strip() for x in self._objList.split(",") if str(x).lower().strip() != ""]
+        if self._objList is not None and not isinstance(self._objList, list):
+            self._objList = None
+
+        self._objModelType = kwargs.get("objModelType", "ssd")
+        self._objDetectCfg = {}
+
+        if self._objModelType.strip().lower() == "yolo":
+            self._objConfigFile = kwargs.get("objDetectCfg", os.path.join(os.path.dirname(__file__), 
+                                                                          "resources", 
+                                                                          "yolov7", 
+                                                                          "config.json"))
+            
+            self._objModelFile = kwargs.get("objDetectModel", os.path.join(os.path.dirname(__file__), 
+                                                                           "resources", 
+                                                                           "yolov7", 
+                                                                           "yolov7-tiny.pt"))
+            
+            self._objLabelFile = kwargs.get("objDetectLabels", os.path.join(os.path.dirname(__file__), 
+                                                                            "resources", 
+                                                                            "yolov7", 
+                                                                            "labels.txt"))
+            
+            if os.path.isfile(self._objConfigFile):
+                import json
+                with open(self._objConfigFile, "r", encoding="UTF-8") as fp:
+                    self._objDetectCfg = json.load(fp)
+
+            exec("import " + self._objDetectCfg.get("library", "yolov7"))
+            self._objModel = eval(self._objDetectCfg.get("library", "yolov7") + ".load(self._objModelFile)")
+            self._objModel.conf = self._objDetectCfg.get("confidence", 0.25)
+            self._objModel.iou = self._objDetectCfg.get("iou", 0.45)
+
+        else:
+            self._objConfigFile = kwargs.get("objDetectCfg", os.path.join(os.path.dirname(__file__), 
+                                                                          "resources", 
+                                                                          "mobilenet_v3", 
+                                                                          "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"))
+            
+            self._objModelFile = kwargs.get("objDetectModel", os.path.join(os.path.dirname(__file__), 
+                                                                           "resources", 
+                                                                           "mobilenet_v3", 
+                                                                           "frozen_inference_graph.pb"))
+            
+            self._objLabelFile = kwargs.get("objDetectLabels", os.path.join(os.path.dirname(__file__), 
+                                                                            "resources", 
+                                                                            "mobilenet_v3", 
+                                                                            "labels.txt"))
+
+            self._objModel = cv2.dnn_DetectionModel(self._objModelFile, self._objConfigFile)
+            self._objModel.setInputSize(320, 320)  # greater this value the better the results; tune it for best output
+            self._objModel.setInputScale(1.0 / 127.5)
+            self._objModel.setInputMean((127.5, 127.5, 127.5))
+            self._objModel.setInputSwapRB(True)
+
         self._objShowNames = kwargs.get("showObjectNames", True)
         self._objOutlineColor = kwargs.get("objOutlineColor", (255, 0, 0))
         self._objFontColor = kwargs.get("objFontColor", (255, 255, 255))
 
-        self._objModel = cv2.dnn_DetectionModel(self._objModelFile, self._objConfigFile)
-        self._objModel.setInputSize(320, 320)  # greater this value the better the results; tune it for best output
-        self._objModel.setInputScale(1.0 / 127.5)
-        self._objModel.setInputMean((127.5, 127.5, 127.5))
-        self._objModel.setInputSwapRB(True)
         self._objLabels = []
         
         self._motionThreshold = kwargs.get("motionThreshold", 20)
@@ -84,12 +133,16 @@ class detector(object):
         self.logger.debug("showFaceNames      = " + str(self._faceShowNames))
         self.logger.debug("faceFontColor      = " + str(self._faceFontColor))
         self.logger.debug("faceOutlineColor   = " + str(self._faceOutlineColor))
+
+        self.logger.debug("objModelType       = " + str(self._objModelType))
         self.logger.debug("objDetectCfg       = " + str(self._objConfigFile))
-        self.logger.debug("objDetectModel     = " + str(self._objModelFile))
-        self.logger.debug("objDetectLabels    = " + str(self._objLabelFile))
+        self.logger.debug("objDetectList      = " + str(self._objList))
+        self.logger.debug("objDetectModel     = " + str(self._objModelFile))  
+        self.logger.debug("objDetectLabels    = " + str(self._objLabelFile))  
         self.logger.debug("showObjectNames    = " + str(self._objShowNames))
         self.logger.debug("objFontColor       = " + str(self._objFontColor))
         self.logger.debug("objOutlineColor    = " + str(self._objOutlineColor))
+        
         self.logger.debug("motionThreshold    = " + str(self._motionThreshold))
         self.logger.debug("motionMinArea      = " + str(self._motionMinArea))
         self.logger.debug("motionOutlineColor = " + str(self._motionOutlineColor))
@@ -161,7 +214,11 @@ class detector(object):
         with open(self._objLabelFile, 'rt') as fp:
             self._objLabels = fp.read().rstrip('\n').split('\n')
 
-    def analyze(self, image):
+    def analyze(self, image, detectFaces=None, detectObjects=None, detectMotion=None):
+        """
+        Set detectFaces, detectObjects, or detectMotion to True or False to override global setting for this one image.
+        """
+
         start = time.time()
 
         self.faces = []
@@ -171,28 +228,31 @@ class detector(object):
 
         self._formatImage(image)
         
-        if self._detectFaces:
-            self.face_detection()
+        if (detectMotion is None and self._detectMotion) or detectMotion:
+            self.motion_detection()
 
-        if self._detectObjects:
+        if (detectObjects is None and self._detectObjects) or detectObjects:
             self.object_detection()
 
-        if self._detectMotion:
-            self.motion_detection()
+        if (detectFaces is None and self._detectFaces) or detectFaces:
+            self.face_detection(filterByObjects=detectFaces if detectFaces is not None else self._detectObjects)
 
         end = time.time()
         
         self.rtSecs = end - start
         self.rt_logger.debug("Executed in " + str(self.rtSecs) + " seconds")
 
-    def face_detection(self, image=None):
-        self._formatImage(image)
-        self.faces = []
+    def _get_face_parts(self, im, offset_top=None, offset_left=None):
 
-        face_locations = face_recognition.face_locations(self._scaledRGBImage, model=self._faceModel)
+        # Find face outline
+        face_locations = face_recognition.face_locations(im, model=self._faceModel)
+        if face_locations is None or len(face_locations) < 1:
+            return [], None
+
         face_names = None
         if self._recognizeFaces:
-            face_encodings = face_recognition.face_encodings(self._scaledRGBImage, face_locations)
+            # Determine whose face this is
+            face_encodings = face_recognition.face_encodings(im, face_locations)
 
             face_names = []
             for face_encoding in face_encodings:
@@ -205,6 +265,68 @@ class detector(object):
                     name = self._faceNames[best_match_index]
 
                 face_names.append(name)
+
+        if offset_top is not None and offset_left is not None:
+            fl = []
+            for item in face_locations:
+                # Relocate using top left corner of cropped image
+                fl.append((offset_top + item[0], offset_left + item[1], offset_top + item[2], offset_left + item[3]))
+
+            face_locations = fl            
+        
+        return face_locations, face_names
+
+    def face_detection(self, image=None, filterByObjects=False):
+
+        start = time.time()
+
+        self._formatImage(image)
+        self.faces = []
+
+        face_locations = []
+        face_names = []
+
+        # Optimization:  
+        # If we have enabled object detection but we don't find any "person" then we can skip to the end.
+        if filterByObjects and "person" in self._objLabels:
+            if "person" not in [x.get("name") for x in self.objects]:
+                return
+            
+            else:
+                # Theoretically, since we can do object detection for "person" then we could carve out of the
+                # main picture the "person" entries and feed those individually which should make the whole
+                # process run faster since it'd be covering fewer pixels... thus enabling larger scale images.
+                #
+                # Obviously this only works if detect objects is enabled and we include person detection there.
+                # So to make this "real" we would need a new variable to use object/face optimizations while
+                # still enabling the end user to supply their own inference model which may not map person or
+                # may map it in an incompatible way.
+
+                for item in self.objects:
+                    if item.get("name").lower().strip() == "person":
+
+                        loc = item["scaled_location"]
+                        left = loc["left"]
+                        top = loc["top"]
+                        right = loc["right"]
+                        bottom = loc["bottom"]
+                        im = self._scaledRGBImage[top:bottom, left:right]
+
+                        fl, fn = self._get_face_parts(im, top, left)
+                        face_locations.extend(fl)
+                        if fn is None:
+                            face_names.append(None)
+                        else:
+                            face_names.extend(fn)
+
+        else:
+            # Default (if detectObjects is disabled and filterByObjects is False)
+            fl, fn = self._get_face_parts(self._scaledRGBImage)
+            face_locations.extend(fl)
+            if fn is None:
+                face_names.append(None)
+            else:
+                face_names.extend(fn)
 
         for idx, (stop, sright, sbottom, sleft) in enumerate(face_locations):
             left = int(sleft * self._faceScaleUpFactor)
@@ -240,62 +362,94 @@ class detector(object):
                         "bottom": sbottom 
                     } 
                 })
+        
+        end = time.time()
+        self.logger.debug("FACE TIME   = " + str(end - start) + " seconds")
+
+    def _parse_obj_detect_info(self, classInd, conf, bounding_box):
+        # bounding_box = (left, top, width, height)
+
+        class_name = None
+
+        if classInd >= 0 and classInd < len(self._objLabels):
+            class_name = self._objLabels[classInd]
+
+        if self._objList is not None:
+            if class_name is None or str(class_name).strip().lower() not in self._objList:
+                return
+
+        sleft = bounding_box[0]
+        stop = bounding_box[1]
+        sright = bounding_box[0] + bounding_box[2]
+        sbottom = bounding_box[1] + bounding_box[3]
+
+        left = int(sleft * self._faceScaleUpFactor)
+        top = int(stop * self._faceScaleUpFactor)
+        right = int(sright * self._faceScaleUpFactor)
+        bottom = int(sbottom * self._faceScaleUpFactor)
+
+        if isinstance(self.objects, list):
+            self.objects.append({ 
+                "type": "Object", 
+                "confidence": conf, 
+                "name": class_name,
+                "location": { 
+                    "left": left, 
+                    "top": top, 
+                    "right": right, 
+                    "bottom": bottom 
+                },
+                "scaled_location": { 
+                    "left": sleft, 
+                    "top": stop, 
+                    "right": sright, 
+                    "bottom": sbottom 
+                } 
+            })
+
+        if self._imageMarkup:
+            cv2.rectangle(self.image, (left, top), (right, bottom), self._objOutlineColor, 2)
+            if class_name is not None and self._objShowNames:
+                cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), self._objOutlineColor, cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(self.image, class_name, (left + 6, bottom - 6), font, 0.5, self._objFontColor, 1)
 
     def object_detection(self, image=None):
+        start = time.time()
+
         self._formatImage(image)
 
         self.objects = []
 
-        classIndex, confidence, bbox = self._objModel.detect(self._scaledBGRImage, confThreshold=0.5)
-        font = cv2.FONT_HERSHEY_PLAIN
+        if self._objModelType == "yolo":
+            results = self._objModel(self._scaledBGRImage, 
+                                     size=int(self._objDetectCfg.get("size", 640)), 
+                                     augment=self._objDetectCfg.get("augment"))
 
-        try:
-            for classInd, conf, boxes in zip(classIndex.flatten(), confidence.flatten(), bbox):
-                sleft = boxes[0]
-                stop = boxes[1]
-                sright = boxes[0] + boxes[2]
-                sbottom = boxes[1] + boxes[3]
+            predictions = results.pred[0]
+            for item in predictions:
+                bounding_box = (int(item[0]), int(item[1]), int(item[2]) - int(item[0]), int(item[3]) - int(item[1]))
+                conf = item[4]
+                classInd = int(item[5])
+                self._parse_obj_detect_info(classInd, conf, bounding_box)
+        else:
+            classIndex, confidence, bbox = self._objModel.detect(self._scaledBGRImage, confThreshold=0.5)
 
-                left = int(sleft * self._faceScaleUpFactor)
-                top = int(stop * self._faceScaleUpFactor)
-                right = int(sright * self._faceScaleUpFactor)
-                bottom = int(sbottom * self._faceScaleUpFactor)
+            try:
+                for classInd, conf, bounding_box in zip(classIndex.flatten(), confidence.flatten(), bbox):
+                    # classInd = index starting at 1 for ssd/mobilenet so we need to subtract one from it
+                    self._parse_obj_detect_info(classInd - 1, conf, bounding_box)
 
-                class_name = None
-
-                if classInd > 0 and classInd <= len(self._objLabels):
-                    class_name = self._objLabels[classInd - 1]
-
-                if isinstance(self.objects, list):
-                    self.objects.append({ 
-                        "type": "Object", 
-                        "confidence": conf, 
-                        "name": class_name,
-                        "location": { 
-                            "left": left, 
-                            "top": top, 
-                            "right": right, 
-                            "bottom": bottom 
-                        },
-                        "scaled_location": { 
-                            "left": sleft, 
-                            "top": stop, 
-                            "right": sright, 
-                            "bottom": sbottom 
-                        } 
-                    })
-
-                if self._imageMarkup:
-                    cv2.rectangle(self.image, (left, top), (right, bottom), self._objOutlineColor, 2)
-                    if class_name is not None and self._objShowNames:
-                        cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), self._objOutlineColor, cv2.FILLED)
-                        font = cv2.FONT_HERSHEY_DUPLEX
-                        cv2.putText(self.image, class_name, (left + 6, bottom - 6), font, 0.5, self._objFontColor, 1)
-
-        except AttributeError:
-            pass
+            except AttributeError:
+                pass
+        
+        end = time.time()
+        self.logger.debug("OBJ TIME    = " + str(end - start) + " seconds")
 
     def motion_detection(self, image=None):
+        
+        start = time.time()
+
         self._formatImage(image)
 
         self.movements = []
@@ -345,3 +499,6 @@ class detector(object):
                                    int(float(y) * self._faceScaleUpFactor) + int(float(h) * self._faceScaleUpFactor)), 
                               color=self._motionOutlineColor, 
                               thickness=2)
+        
+        end = time.time()
+        self.logger.debug("MOTION TIME = " + str(end - start) + " seconds")

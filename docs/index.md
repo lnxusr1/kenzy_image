@@ -30,6 +30,7 @@ General Options:
   -v, --version         Print Version
 
 Startup Options:
+  --camera-device       Device ID or RTSP stream to leverage for source images.
   --no-markup           Hide outlines and names
   --scale-factor SCALE_FACTOR
                         Image scale factor (decimal).  Values < 1 improve performance.
@@ -51,6 +52,8 @@ Face Detection:
 
 Object Detection:
   --no-objects          Disable object detection
+  --object-detect-type TYPE
+                        Type of model to use (yolo or ssd)
   --object-detect-config OBJECT_DETECT_CONFIG
                         Object detection configuration
   --object-detect-model OBJECT_DETECT_MODEL
@@ -61,6 +64,8 @@ Object Detection:
                         Object names font color as tuple e.g. (0, 0, 255)
   --object-detect-outline-color OBJECT_DETECT_OUTLINE_COLOR
                         Object detection outline color as tuple e.g. (0, 0, 255)
+  --object-list  OBJECT_LIST
+                        Limit list of objects to detect detection (optional)
   --no-object-names     Hides the object names even if identified.
 
 Motion Detection:
@@ -83,6 +88,8 @@ python3 -m kenzy_image
 More information available at:
 http://kenzy.ai
 ```
+
+The Object Detection model for `ssd` is MobileNet V3.  The model for `yolo` is Yolov7 which will leverage any available and compatible cuda GPU.  You may need to test both methods to find the one that suits your needs the best.
 
 -----
 
