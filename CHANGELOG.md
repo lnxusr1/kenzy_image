@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7]
+
+### Modified
+
+- Corrected error in `--no-faces` option that was preventing it from taking affect
+
 ## [0.0.6]
 
 ### Added

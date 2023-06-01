@@ -39,7 +39,7 @@ def doParseArgs(cfg, ARGS):
     doParseArg("orientation", ARGS.orientation, cfg)
 
     if ARGS.no_faces:
-        cfg["defectFaces"] = False
+        cfg["detectFaces"] = False
     
     if ARGS.no_objects:
         cfg["detectObjects"] = False
@@ -159,9 +159,7 @@ if ARGS.config is not None and os.path.isfile(ARGS.config):
         cfg = json.load(fp)
 
 cfg = doParseArgs(cfg, ARGS)
-
 obj = detector(**cfg)
-
 
 if ARGS.faces is not None and isinstance(ARGS.faces, list):
     for item in ARGS.faces:
