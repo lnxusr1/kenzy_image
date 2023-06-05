@@ -2,13 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.7]
-
-### Modified
-
-- Corrected error in `--no-faces` option that was preventing it from taking affect
-
-## [0.0.6]
+## Builds [0.0.6] thru [0.0.8]
 
 ### Added
 
@@ -22,6 +16,8 @@ All notable changes to this project will be documented in this file.
 - Default object detection model changed from MobileNet V3 SSD to Yolov7
 - Fixed spelling mistakes in documentation for option variables
 - Optimized hierarchy for image processing to improve overall performance and lag
+- Corrected error in `--no-faces` option that was preventing it from taking affect
+- Corrected error in bounding boxes when scale factor is larger than 1.0 (which is not recommended)
 
 ## [0.0.5]
 

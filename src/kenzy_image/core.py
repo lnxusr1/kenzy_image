@@ -45,8 +45,12 @@ class detector(object):
         self._faceOutlineColor = kwargs.get("faceOutlineColor", (0, 0, 255))
         self._faceFontColor = kwargs.get("faceFontColor", (255, 255, 255))
         
-        if self._faceScaleDownFactor < 1 and self._faceScaleDownFactor > 0:
+        if self._faceScaleDownFactor > 0 and self._faceScaleDownFactor != 1.0:
             self._faceScaleUpFactor = ((1.0 - float(self._faceScaleDownFactor)) / float(self._faceScaleDownFactor)) + 1.0
+            if self._faceScaleDownFactor > 1:
+                x = self._faceScaleUpFactor
+                self._faceScaleUpFactor = self._faceScaleDownFactor
+                self._faceScaleDownFactor = x
 
         self.image = None
         self._lastImage = None
