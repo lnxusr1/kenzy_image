@@ -239,7 +239,9 @@ class detector(object):
             self.object_detection()
 
         if (detectFaces is None and self._detectFaces) or detectFaces:
-            self.face_detection(filterByObjects=detectFaces if detectFaces is not None else self._detectObjects)
+            # self.face_detection(filterByObjects=detectFaces if detectFaces is not None else self._detectObjects)
+            self.face_detection(filterByObjects=False)  # Hack to disable optimizations preventing multi-channel 
+                                                        # images from processing correctly in face recognition
 
         end = time.time()
         
@@ -247,7 +249,6 @@ class detector(object):
         self.rt_logger.debug("Executed in " + str(self.rtSecs) + " seconds")
 
     def _get_face_parts(self, im, offset_top=None, offset_left=None):
-
         # Find face outline
         face_locations = face_recognition.face_locations(im, model=self._faceModel)
         if face_locations is None or len(face_locations) < 1:
@@ -306,6 +307,8 @@ class detector(object):
                 # still enabling the end user to supply their own inference model which may not map person or
                 # may map it in an incompatible way.
 
+                # TODO: FIX THIS (currently disabled due to multi-channel image issues in face recognition)
+
                 for item in self.objects:
                     if item.get("name").lower().strip() == "person":
 
@@ -338,7 +341,7 @@ class detector(object):
             right = int(sright * self._faceScaleUpFactor)
             bottom = int(sbottom * self._faceScaleUpFactor)
 
-            face_name = face_names[idx] if self._recognizeFaces else ""
+            face_name = face_names[idx] if self._recognizeFaces else self._defaultFaceName
 
             if self._imageMarkup:
                 cv2.rectangle(self.image, (left, top), (right, bottom), self._faceOutlineColor, 2)
@@ -368,7 +371,7 @@ class detector(object):
                 })
         
         end = time.time()
-        self.logger.debug("FACE TIME   = " + str(end - start) + " seconds")
+        self.rt_logger.debug("FACE TIME   = " + str(end - start) + " seconds")
 
     def _parse_obj_detect_info(self, classInd, conf, bounding_box):
         # bounding_box = (left, top, width, height)
@@ -448,7 +451,7 @@ class detector(object):
                 pass
         
         end = time.time()
-        self.logger.debug("OBJ TIME    = " + str(end - start) + " seconds")
+        self.rt_logger.debug("OBJ TIME    = " + str(end - start) + " seconds")
 
     def motion_detection(self, image=None):
         
@@ -505,4 +508,4 @@ class detector(object):
                               thickness=2)
         
         end = time.time()
-        self.logger.debug("MOTION TIME = " + str(end - start) + " seconds")
+        self.rt_logger.debug("MOTION TIME = " + str(end - start) + " seconds")

@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Builds [0.0.6] thru [0.0.8]
+## Builds [0.0.6] thru [0.0.9]
 
 ### Added
 
@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - Optimized hierarchy for image processing to improve overall performance and lag
 - Corrected error in `--no-faces` option that was preventing it from taking affect
 - Corrected error in bounding boxes when scale factor is larger than 1.0 (which is not recommended)
+- Corrected bad local import in main init()
+- Disabled optimization for processing individual faces rather than entire image due to multi-channel image issues
 
 ## [0.0.5]
 
