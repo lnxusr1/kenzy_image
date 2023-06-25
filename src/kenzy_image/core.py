@@ -13,6 +13,10 @@ class detector(object):
         self.rt_logger = logging.getLogger("DETECT_TIME")
 
         self._imageMarkup = kwargs.get("imageMarkup", True)
+        self._imageMarkupFaces = kwargs.get("imageMarkupFaces", self._imageMarkup)
+        self._imageMarkupObjects = kwargs.get("imageMarkupObjects", self._imageMarkup)
+        self._imageMarkupMotion = kwargs.get("imageMarkupMotion", self._imageMarkup)
+
         self._faceNames = []
         self._faceEncodings = []
 
@@ -128,6 +132,9 @@ class detector(object):
 
         self.logger.debug("==< CONFIG >===================================")
         self.logger.debug("orientation        = " + str(orientation))
+        self.logger.debug("imageMarkupFaces   = " + str(self._imageMarkupFaces))
+        self.logger.debug("imageMarkupObjects = " + str(self._imageMarkupObjects))
+        self.logger.debug("imageMarkupMotion  = " + str(self._imageMarkupMotion))
         self.logger.debug("detectFaces        = " + str(self._detectFaces))
         self.logger.debug("detectObjects      = " + str(self._detectObjects))
         self.logger.debug("detectMotion       = " + str(self._detectMotion))
@@ -240,8 +247,10 @@ class detector(object):
 
         if (detectFaces is None and self._detectFaces) or detectFaces:
             # self.face_detection(filterByObjects=detectFaces if detectFaces is not None else self._detectObjects)
-            self.face_detection(filterByObjects=False)  # Hack to disable optimizations preventing multi-channel 
-                                                        # images from processing correctly in face recognition
+            
+            # Hack to disable optimizations preventing multi-channel 
+            # images from processing correctly in face recognition
+            self.face_detection(filterByObjects=False)
 
         end = time.time()
         
@@ -343,7 +352,7 @@ class detector(object):
 
             face_name = face_names[idx] if self._recognizeFaces else self._defaultFaceName
 
-            if self._imageMarkup:
+            if self._imageMarkupFaces:
                 cv2.rectangle(self.image, (left, top), (right, bottom), self._faceOutlineColor, 2)
 
                 if self._recognizeFaces and self._faceShowNames:
@@ -414,7 +423,7 @@ class detector(object):
                 } 
             })
 
-        if self._imageMarkup:
+        if self._imageMarkupObjects:
             cv2.rectangle(self.image, (left, top), (right, bottom), self._objOutlineColor, 2)
             if class_name is not None and self._objShowNames:
                 cv2.rectangle(self.image, (left, bottom - 18), (right, bottom), self._objOutlineColor, cv2.FILLED)
@@ -499,7 +508,7 @@ class detector(object):
                     } 
                 })
 
-            if self._imageMarkup:
+            if self._imageMarkupMotion:
                 cv2.rectangle(img=self.image, 
                               pt1=(int(float(x) * self._faceScaleUpFactor), int(float(y) * self._faceScaleUpFactor)), 
                               pt2=(int(float(x) * self._faceScaleUpFactor) + int(float(w) * self._faceScaleUpFactor), 

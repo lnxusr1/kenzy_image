@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0]
+
+### Added
+
+- ```imageMarkupFaces``` set to ```True``` or ```False``` to indicate showing bounding boxes on detected faces (overrides ```imageMarkup``` value)
+- ```imageMarkupObjects``` set to ```True``` or ```False``` to indicate showing bounding boxes on detected objects (overrides ```imageMarkup``` value)
+- ```imageMarkupMotion``` set to ```True``` or ```False``` to indicate showing bounding boxes on detected motion (overrides ```imageMarkup``` value)
+
+### Modified
+
+- Corrected default value for ```objModelType``` set to ```ssd``` for direct module execution
+
 ## Builds [0.0.6] thru [0.0.9]
 
 ### Added

@@ -27,7 +27,7 @@ myImageDetector = detector(detectFaces=True,
                            detectObjects=True, 
                            objModelType="ssd",  # or yolo
                            detectMotion=True, 
-                           imageMarkup=True, 
+                           imageMarkupFaces=True, 
                            scaleFactor=0.5)
 
 # Add Named Faces to Recognize

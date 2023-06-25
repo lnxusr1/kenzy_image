@@ -109,7 +109,7 @@ face_group.add_argument('--faces', action="append", nargs=2, metavar=("path", "n
 object_group = parser.add_argument_group('Object Detection')
 
 object_group.add_argument('--no-objects', action="store_true", help="Disable object detection")
-object_group.add_argument('--object-detect-type', default="yolo", help="Object detection type (yolo or ssd)")
+object_group.add_argument('--object-detect-type', default="ssd", help="Object detection type (yolo or ssd)")
 object_group.add_argument('--object-detect-config', default=None, help="Object detection configuration")
 object_group.add_argument('--object-detect-model', default=None, help="Object detection inference model file")
 object_group.add_argument('--object-detect-labels', default=None, help="Object detection inference model label files")

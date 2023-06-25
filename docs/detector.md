@@ -11,7 +11,7 @@ myImageDetector = detector(detectFaces=True,
                            detectObjects=True, 
                            objModelType="ssd",  # or yolo
                            detectMotion=True, 
-                           imageMarkup=True, 
+                           imageMarkupFaces=True, 
                            scaleFactor=0.5)
 
 # Add Named Faces to Recognize
@@ -53,7 +53,9 @@ cv2.destroyAllWindows()
 | detectFaces | `True` | Enable/disable face detection |
 | detectObjects | `True` | Enable/disable object detection |
 | detectMotion | `True` | Enable/disable motion detection |
-| imageMarkup | `True` | Enables drawing outlines on __detector.image__ |
+| imageMarkupFaces | `True` | Enables drawing face outlines on __detector.image__ |
+| imageMarkupObjects | `True` | Enables drawing object outlines on __detector.image__ |
+| imageMarkupMotion | `True` | Enables drawing motion outlines on __detector.image__ |
 | scaleFactor | `1.0` | Scale coefficient to apply to original image <br /><small>0.75 = scale source image to 75% to improve performance</small> |
 | defaultFaceName | `"Unknown"` | The label to use for any faces detected but not recognized |
 | faceModel | `"hog"` | Face model to use (__hog__ or __cnn__)
