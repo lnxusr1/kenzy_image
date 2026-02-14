@@ -84,7 +84,7 @@ def doParseArgs(cfg, ARGS):
 parser = argparse.ArgumentParser(
     description=__app_name__ + " v" + __version__,
     formatter_class=argparse.RawTextHelpFormatter,
-    epilog='''To start the services try:\npython3 -m kenzy_image\n\nMore information available at:\nhttp://kenzy.ai''')
+    epilog='''To start the services try:\npython3 -m kenzy_image\n\nMore information available at:\nhttp://kenzy.dev''')
 
 parser.add_argument('-c', '--config', default=None, help="Configuration file")
 parser.add_argument('-v', '--version', action="store_true", help="Print Version")

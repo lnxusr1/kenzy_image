@@ -1,8 +1,8 @@
 # kenzy_image &middot; [![GitHub license](https://img.shields.io/github/license/lnxusr1/image_analyzer)](https://github.com/lnxusr1/kenzy_image/blob/master/LICENSE) ![Python Versions](https://img.shields.io/pypi/pyversions/yt2mp3.svg) ![Read the Docs](https://img.shields.io/readthedocs/kenzy_image) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lnxusr1/kenzy_image)
 
-This module is dedicated to simplifying the interactions required for face detection, face recognition, object detection, and motion detection.  Visit our main site: [https://kenzy.ai/](https://kenzy.ai/)
+This module is dedicated to simplifying the interactions required for face detection, face recognition, object detection, and motion detection.  Visit our main site: [https://kenzy.dev/](https://kenzy.dev/)
 
-More info available in the [documentation](https://image-docs.kenzy.ai/)
+More info available in the [documentation](https://image-docs.kenzy.dev/)
 
 ## Installation
 
@@ -16,7 +16,7 @@ Just make sure you're running Python 3.6 or newer.
 
 ## Embedding into your program
 
-Visit the [detector](https://image-docs.kenzy.ai/en/latest/detector/) page in the [documentation](https://image-docs.kenzy.ai/) for more information.
+Visit the [detector](https://image-docs.kenzy.dev/en/latest/detector/) page in the [documentation](https://image-docs.kenzy.dev/) for more information.
 
 ```
 import cv2  # For webcam input
@@ -99,6 +99,6 @@ Many thanks to those that build the models and core libraries that KENZY_IMAGE i
 -----
 
 ## Help &amp; Support
-Help and additional details is available at [https://kenzy.ai](https://kenzy.ai)
+Help and additional details is available at [https://kenzy.dev](https://kenzy.dev)
 
-Read the docs: [https://image-docs.kenzy.ai/](https://image-docs.kenzy.ai/)
+Read the docs: [https://image-docs.kenzy.dev/](https://image-docs.kenzy.dev/)

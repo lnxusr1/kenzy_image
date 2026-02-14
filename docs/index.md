@@ -86,7 +86,7 @@ To start the services try:
 python3 -m kenzy_image
 
 More information available at:
-http://kenzy.ai
+http://kenzy.dev
 ```
 
 The Object Detection model for `ssd` is MobileNet V3.  The model for `yolo` is Yolov7 which will leverage any available and compatible cuda GPU.  You may need to test both methods to find the one that suits your needs the best.
@@ -94,4 +94,4 @@ The Object Detection model for `ssd` is MobileNet V3.  The model for `yolo` is Y
 -----
 
 ## Help &amp; Support
-Help and additional details is available at [https://kenzy.ai](https://kenzy.ai)
+Help and additional details is available at [https://kenzy.dev](https://kenzy.dev)

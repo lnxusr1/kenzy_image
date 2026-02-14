@@ -1,5 +1,5 @@
 site_name: KENZY_IMAGE Docs
-site_url: https://kenzy.ai/
+site_url: https://kenzy.dev/
 repo_url: https://github.com/lnxusr1/kenzy-image/
 
 theme: 
@@ -8,17 +8,17 @@ theme:
     prev_next_buttons_location: none
     titles_only: true
     collapse_navigation: false
-    logo: https://kenzy.ai/wp-content/uploads/2023/06/kenzy_image_logo_text_light.png
+    logo: https://kenzy.dev/wp-content/uploads/2023/06/kenzy_image_logo_text_light.png
 
 nav:
     - Overview: 'index.md'
     - Detector: 'detector.md'
     - References: 'references.md'
     - Links:
-      - '@ Code': 'https://kenzy.ai/code'
-      - '@ Community': 'https://kenzy.ai/discussion/kenzy-image'
-      - '@ Bugs & Issues': 'https://kenzy.ai/issues/kenzy-image'
-      - '@ kenzy.ai': 'https://kenzy.ai'
+      - '@ Code': 'https://kenzy.dev/code'
+      - '@ Community': 'https://kenzy.dev/discussion/kenzy-image'
+      - '@ Bugs & Issues': 'https://kenzy.dev/issues/kenzy-image'
+      - '@ kenzy.ai': 'https://kenzy.dev'
 
 plugins:
   - search

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1]
+
+### Modified
+
+- Links updated to Kenzy.DEV from Kenzy.AI
+
 ## [1.0.0]
 
 ### Added
